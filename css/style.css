@@ -333,30 +333,18 @@ input{
    LIKES (COEUR)
 ================================================== */
 
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+    font-size: 1rem;
 }
-
-.like {
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #bbb;
-  transition: color 0.2s;
+.like-btn.liked {
+    color: red;
 }
-
-.like:hover {
-  color: #7b1e1e;
-}
-
-.like.liked {
-  color: #7b1e1e;
-}
-
-.like-count {
-  font-size: 0.8rem;
-  font-weight: bold;
+.like-btn i {
+    margin-right: 5px;
 }
 
 /* ==================================================

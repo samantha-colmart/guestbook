@@ -17,6 +17,21 @@ if (!empty($_POST['delete_id'])) {
     }
 }
 
+if (isset($_POST["message_id"]) && isset($_SESSION['id'])) {
+    $message_id = (int)$_POST['message_id'];
+    $user_id = $_SESSION['id'];
+
+    if (isset($_POST['like'])) {
+        add_like($pdo, $user_id, $message_id);
+    } elseif (isset($_POST['unlike'])) {
+        remove_like($pdo, $user_id, $message_id);
+    }
+    header("Location: guestbook.php" . (!empty($_GET['search']) ? "?search=" . urlencode($_GET['search']) : ""));
+    exit;
+}
+
+
+
 
 $perPage = 9;
 if(isset($_GET['page'])){
@@ -61,12 +76,17 @@ if (!empty($_GET['search'])) {
     <?php
         foreach ($messages as $message) {
             $date=date_create_from_format("Y-m-d H:i:s", htmlspecialchars($message['date']));
+            $likes_count = count_likes($pdo, $message['id']);
+            if(isset($_SESSION['id'])){
+                $liked = user_liked($pdo, $_SESSION['id'], $message['id']);
+            }
             echo '
             <article class="message">
                 <div>
                     <p class="meta">Posté par ' . htmlspecialchars($message['login']) . ' le ' . date_format($date,'j-M-Y') . '</p>
                     <p class="content">' . htmlspecialchars($message['message']) . '</p>
-                </div>';
+                </div>
+                <div class="options-container">';
                 if(isset($_SESSION['id']) && $_SESSION['id'] === $message['id_user']){
                     echo '
                     <div class="options-container">
@@ -81,7 +101,27 @@ if (!empty($_GET['search'])) {
                         </form>
                     </div>';
                 }
-            echo '</article>';
+                if(isset($_SESSION['id'])){
+                    echo '<form method="POST" action="">
+                            <input type="hidden" name="message_id" value="' . $message['id'] . '">';
+                    if($liked){
+                        echo '<button type="submit" name="unlike" class="like-btn liked">
+                                <i class="fa-solid fa-heart"></i> ' . $likes_count . '
+                            </button>';
+                    } else {
+                        echo '<button type="submit" name="like" class="like-btn">
+                                <i class="fa-solid fa-heart"></i> ' . $likes_count . '
+                            </button>';
+                    }
+                    echo '</form>';
+                } else {
+                    echo '<span class="like-count">
+                            <i class="fa-solid fa-heart"></i> ' . $likes_count . '
+                        </span>';
+                }
+
+                echo '</div>
+            </article>';
         }
     ?>
     </section>

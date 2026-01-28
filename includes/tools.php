@@ -244,4 +244,42 @@ function count_search_messages($pdo, $search){
 }
 
 
-?>
+// Fonction pour enregistrer un like dans la BDD
+function add_like($pdo, $id_user, $id_message){
+    $sql = "INSERT INTO likes (id_user, id_message) VALUES (:id_user, :id_message)";
+    $query = $pdo->prepare($sql);
+    $query->execute([':id_user' => $id_user, ':id_message' => $id_message]);
+    return true;
+}
+
+
+
+// Fonction supprimer like
+function like_deletion($pdo, $id_user, $id_message){
+    $sql = "DELETE FROM likes WHERE id_user = :id_user AND id_message = :id_message";
+    $query = $pdo->prepare($sql);
+    $query->execute([':id_user' => $id_user, ':id_message' => $id_message]);
+    return true;
+}
+
+
+// Fonction pour compter le nombre total de likes
+function count_likes($pdo, $id_message){
+    $sql = 'SELECT COUNT(*) AS nb_likes FROM likes WHERE id_message = :id_message;';
+    $query = $pdo->prepare($sql);
+    $query->execute(['id_message' => $id_message]);
+    $result = $query->fetch();
+    $nbLikes = (int) $result['nb_likes'];
+    return $nbLikes;
+}
+
+
+// Vérifier si l'utilisateur à déjà liké le message
+function user_liked($pdo, $id_user, $id_message){
+    $sql = 'SELECT COUNT(*) AS user_liked FROM likes WHERE id_user = :id_user AND id_message = :id_message;';
+    $query = $pdo->prepare($sql);
+    $query->execute(['id_user' => $id_user, 'id_message' => $id_message]);
+    $result = $query->fetch();
+    $userLiked = (int) $result['user_liked'];
+    return $userLiked > 0;
+}
