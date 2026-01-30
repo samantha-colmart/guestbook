@@ -23,7 +23,7 @@
             <?php
             if(!empty($_SESSION['id'])){
                 echo '
-                <a href="profil.php">Modification</a>
+                <a href="profil.php">Profil</a>
                 <a href="messages.php">Ajouter un message</a>
                 <a href="deconnexion.php">Deconnexion</a>';
             } else{
